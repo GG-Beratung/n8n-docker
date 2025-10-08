@@ -3,14 +3,15 @@ FROM n8nio/n8n:${N8N_VERSION}
 
 USER root
 
-# 安裝 ffmpeg 和相關依賴
+# ffmpeg
 RUN apk add --no-cache \
     ffmpeg \
     ffmpeg-dev \
-    && rm -rf /var/cache/apk/*
+    && rm -rf /var/cache/apk/* \
+    && apt-get update \
+    && apt-get install -y libatspi2.0-0 libatk-bridge2.0-0 libgtk-3-0
 
-# 切換回原本的使用者
 USER node
 
-# 驗證 ffmpeg 安裝
+# ffmpeg
 RUN ffmpeg -version

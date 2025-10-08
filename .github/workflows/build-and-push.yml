@@ -39,8 +39,8 @@ jobs:
           build-args: |
             N8N_VERSION=${{ inputs.n8n-version }}
           tags: |
-            rxchi1d/n8n-ffmpeg:${{ inputs.n8n-version }}
-            rxchi1d/n8n-ffmpeg:latest
+            fachkraftfreund/n8n-playwright-ffmpeg:${{ inputs.n8n-version }}
+            fachkraftfreund/n8n-playwright-ffmpeg:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           

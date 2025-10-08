@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  n8n-ffmpeg:
-    image: rxchi1d/n8n-ffmpeg:latest
+  n8n-fachkraftfreund:
+    image: fachkraftfreund/n8n-playwright-ffmpeg:latest
     ports:
       - "5678:5678"
     volumes:

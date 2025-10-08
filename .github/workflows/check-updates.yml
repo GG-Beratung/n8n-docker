@@ -1,16 +1,16 @@
-name: Check n8n Updates
+name: Check for n8n Updates
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 每6小時檢查一次
-  workflow_dispatch:  # 手動觸發
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   check-updates:
     runs-on: ubuntu-latest
     outputs:
-      should-build: ${{ steps.version-check.outputs.should-build }}
-      latest-version: ${{ steps.version-check.outputs.latest-version }}
+      build: ${{ steps.version-check.outputs.build }}
+      new-version: ${{ steps.version-check.outputs.new-version }}
     
     steps:
       - name: Checkout
@@ -19,34 +19,33 @@ jobs:
       - name: Check n8n latest version
         id: version-check
         run: |
-          # 獲取官方最新版本
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/n8n-io/n8n/releases/latest | jq -r .tag_name | sed 's/^n8n@//')
-          echo "latest-version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+          NEW_VERSION=$(curl -s https://api.github.com/repos/n8n-io/n8n/releases/latest | jq -r .tag_name | sed 's/^n8n@//')
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
           
-          # 檢查我們的 Docker Hub 是否已有此版本
-          REPO_NAME="rxchi1d/n8n-ffmpeg"
-          if docker manifest inspect ${REPO_NAME}:${LATEST_VERSION} >/dev/null 2>&1; then
-            echo "Version $LATEST_VERSION already exists in our repository"
-            echo "should-build=false" >> $GITHUB_OUTPUT
+          # Docker Hub
+          REPO_NAME="GG-Beratung/n8n-docker"
+          if docker manifest inspect ${REPO_NAME}:${NEW_VERSION} >/dev/null 2>&1; then
+            echo "$NEW_VERSION already built"
+            echo "build=false" >> $GITHUB_OUTPUT
             exit 0
           fi
           
-          # 檢查官方 Docker Hub 是否已有此版本的 n8n image
-          echo "Checking if official n8n:$LATEST_VERSION image exists on Docker Hub..."
-          if docker manifest inspect n8nio/n8n:${LATEST_VERSION} >/dev/null 2>&1; then
-            echo "Official n8n:$LATEST_VERSION image exists on Docker Hub"
-            echo "New version $LATEST_VERSION found and official image is available"
-            echo "should-build=true" >> $GITHUB_OUTPUT
+          # Docker Hub n8n image
+          echo "Checking if official n8n:$NEW_VERSION image exists on Docker Hub..."
+          if docker manifest inspect n8nio/n8n:${NEW_VERSION} >/dev/null 2>&1; then
+            echo "Official n8n:$NEW_VERSION image exists on Docker Hub"
+            echo "New version $NEW_VERSION found and official image is available"
+            echo "build=true" >> $GITHUB_OUTPUT
           else
-            echo "Official n8n:$LATEST_VERSION image not yet available on Docker Hub"
+            echo "Official n8n:$NEW_VERSION image not yet available on Docker Hub"
             echo "Waiting for official image to be published..."
-            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "build=false" >> $GITHUB_OUTPUT
           fi
 
   trigger-build:
     needs: check-updates
-    if: needs.check-updates.outputs.should-build == 'true'
+    if: needs.check-updates.outputs.build == 'true'
     uses: ./.github/workflows/build-and-push.yml
     with:
-      n8n-version: ${{ needs.check-updates.outputs.latest-version }}
+      n8n-version: ${{ needs.check-updates.outputs.new-version }}
     secrets: inherit
