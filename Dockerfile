@@ -7,19 +7,14 @@ USER root
 RUN apk add --no-cache \
     ffmpeg \
     ffmpeg-dev \
-    at-spi2-core \
-    gtk+3.0 \
+    chromium \
     nss \
-    alsa-lib \
-    libxcomposite \
-    libxdamage \
-    libxrandr \
-    libdrm \
-    mesa \
-    libx11 \
-    libxfixes \
-    libxext \
-    eudev \
+    freetype \
+    freetype-dev \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    chromium-chromedriver \
     && rm -rf /var/cache/apk/*
 
 USER node
