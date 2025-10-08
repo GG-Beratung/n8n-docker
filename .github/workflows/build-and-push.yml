@@ -39,8 +39,8 @@ jobs:
           build-args: |
             N8N_VERSION=${{ inputs.n8n-version }}
           tags: |
-            gg-beratung/n8n-docker:${{ inputs.n8n-version }}
-            gg-beratung/n8n-docker:latest
+            immanuelbeckerff/n8n-playwright-ffmpeg:${{ inputs.n8n-version }}
+            immanuelbeckerff/n8n-playwright-ffmpeg:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           
