@@ -15,7 +15,7 @@ RUN apk add --no-cache \
     libxdamage \
     libxrandr \
     libdrm \
-    libgbm \
+    mesa \
     libx11 \
     libxfixes \
     libxext \
