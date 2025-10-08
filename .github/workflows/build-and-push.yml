@@ -1,4 +1,4 @@
-name: Build and Push n8n-ffmpeg
+name: Build and Push n8n-docker
 
 on:
   workflow_call:
