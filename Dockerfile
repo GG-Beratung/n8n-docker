@@ -19,7 +19,7 @@ RUN apk add --no-cache \
     libx11 \
     libxfixes \
     libxext \
-    libudev-zero \
+    eudev \
     && rm -rf /var/cache/apk/*
 
 USER node
