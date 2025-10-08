@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  n8n-ffmpeg:
+    image: rxchi1d/n8n-ffmpeg:latest
+    ports:
+      - "5678:5678"
+    volumes:
+      - appdata/n8n/data:/home/node/.n8n
