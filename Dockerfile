@@ -14,6 +14,12 @@ RUN apk add --no-cache \
     libxcomposite \
     libxdamage \
     libxrandr \
+    libdrm \
+    libgbm \
+    libx11 \
+    libxfixes \
+    libxext \
+    libudev-zero \
     && rm -rf /var/cache/apk/*
 
 USER node
