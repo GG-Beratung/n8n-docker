@@ -1,13 +1,14 @@
 ARG N8N_VERSION=latest
 
-# Use Node.js Debian-based image as base, then install n8n
-FROM node:18-bullseye-slim
+# Use Debian-based Node.js image
+FROM node:20-bookworm-slim
 
 USER root
 
-# Install n8n and dependencies
+# Install n8n dependencies and ffmpeg
 RUN apt-get update && apt-get install -y \
     ffmpeg \
+    graphicsmagick \
     libglib2.0-0 \
     libnss3 libnspr4 \
     libatk1.0-0 libatk-bridge2.0-0 libatspi2.0-0 \
@@ -22,15 +23,18 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install n8n globally
-RUN npm install -g n8n
+RUN npm install -g --omit=dev n8n
 
-# Create n8n user
-RUN useradd -m -u 1000 node || true
+# Create n8n user and directories
+RUN useradd -m -u 1000 -s /bin/bash n8nuser \
+    && mkdir -p /home/n8nuser/.n8n \
+    && chown -R n8nuser:n8nuser /home/n8nuser
 
-USER node
+USER n8nuser
 
 # Set environment variables
-ENV N8N_USER_FOLDER=/home/node/.n8n
+ENV N8N_USER_FOLDER=/home/n8nuser/.n8n
+WORKDIR /home/n8nuser
 
 # Expose n8n port
 EXPOSE 5678
@@ -38,4 +42,4 @@ EXPOSE 5678
 # Verify ffmpeg installation
 RUN ffmpeg -version
 
-CMD ["n8n"]
+CMD ["n8n", "start"]
