@@ -24,8 +24,11 @@ RUN apk add --no-cache \
     chromium-chromedriver \
     gcompat \
     libstdc++ \
-    glib-dev \
+    glib \
     && rm -rf /var/cache/apk/*
+
+# Set library path for glibc
+ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib
 
 USER node
 
