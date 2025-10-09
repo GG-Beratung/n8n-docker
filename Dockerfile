@@ -28,11 +28,10 @@ RUN apk add --no-cache \
     libxcomposite \
     libxdamage \
     libxrandr \
-    libgbm \
     alsa-lib \
     pango \
     cairo \
-    libxshmfence \
+    mesa-gbm \
     && rm -rf /var/cache/apk/*
 
 # Set library path for glibc and create symlink for libglib
