@@ -24,10 +24,20 @@ RUN apk add --no-cache \
     gcompat \
     libstdc++ \
     glib \
+    gtk+3.0 \
+    libxcomposite \
+    libxdamage \
+    libxrandr \
+    libgbm \
+    alsa-lib \
+    pango \
+    cairo \
+    libxshmfence \
     && rm -rf /var/cache/apk/*
 
-# Set library path for glibc
-ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib
+# Set library path for glibc and create symlink for libglib
+ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib:/usr/lib
+RUN ln -s /usr/lib/libglib-2.0.so /usr/glibc-compat/lib/libglib-2.0.so.0 || true
 
 USER node
 
