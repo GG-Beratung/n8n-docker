@@ -21,6 +21,8 @@ RUN apk add --no-cache \
     ca-certificates \
     ttf-freefont \
     chromium-chromedriver \
+    glib \
+    gcompat \
     && rm -rf /var/cache/apk/*
 
 USER node
