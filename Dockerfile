@@ -1,8 +1,11 @@
 ARG N8N_VERSION=latest
-FROM n8nio/n8n:${N8N_VERSION}-debian
+
+# Use Node.js Debian-based image as base, then install n8n
+FROM node:18-bullseye-slim
 
 USER root
 
+# Install n8n and dependencies
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     libglib2.0-0 libgobject-2.0-0 libgio-2.0-0 \
@@ -15,9 +18,24 @@ RUN apt-get update && apt-get install -y \
     libcairo2 libpango-1.0-0 \
     libasound2 libdrm2 libudev1 \
     ca-certificates fonts-liberation fonts-noto-color-emoji \
+    openssl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install n8n globally
+RUN npm install -g n8n
+
+# Create n8n user
+RUN useradd -m -u 1000 node || true
 
 USER node
 
+# Set environment variables
+ENV N8N_USER_FOLDER=/home/node/.n8n
+
+# Expose n8n port
+EXPOSE 5678
+
 # Verify ffmpeg installation
 RUN ffmpeg -version
+
+CMD ["n8n"]
