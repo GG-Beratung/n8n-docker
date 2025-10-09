@@ -1,44 +1,23 @@
 ARG N8N_VERSION=latest
-FROM n8nio/n8n:${N8N_VERSION}
+FROM n8nio/n8n:${N8N_VERSION}-debian
 
 USER root
 
-# Install glibc compatibility for Playwright Chromium (skip bin for arm64 due to compatibility issues)
-RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.35-r1/glibc-2.35-r1.apk \
-    && apk add --no-cache --force-overwrite glibc-2.35-r1.apk \
-    && rm glibc-2.35-r1.apk
-
-# ffmpeg and chromium dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     ffmpeg \
-    ffmpeg-dev \
-    chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    chromium-chromedriver \
-    gcompat \
-    libstdc++ \
-    glib \
-    gtk+3.0 \
-    libxcomposite \
-    libxdamage \
-    libxrandr \
-    alsa-lib \
-    pango \
-    cairo \
-    mesa-gbm \
-    && rm -rf /var/cache/apk/*
-
-# Set library path for glibc and create symlink for libglib
-ENV LD_LIBRARY_PATH=/usr/glibc-compat/lib:/usr/lib
-RUN ln -s /usr/lib/libglib-2.0.so /usr/glibc-compat/lib/libglib-2.0.so.0 || true
+    libglib2.0-0 libgobject-2.0-0 libgio-2.0-0 \
+    libnss3 libnspr4 libsmime3 \
+    libatk1.0-0 libatk-bridge2.0-0 libatspi2.0-0 \
+    libcups2 libdbus-1-3 \
+    libx11-6 libxcomposite1 libxdamage1 libxext6 libxfixes3 libxrandr2 \
+    libxkbcommon0 libxcb1 libxshmfence1 libxrender1 libxss1 \
+    libgbm1 libgtk-3-0 \
+    libcairo2 libpango-1.0-0 \
+    libasound2 libdrm2 libudev1 \
+    ca-certificates fonts-liberation fonts-noto-color-emoji \
+    && rm -rf /var/lib/apt/lists/*
 
 USER node
 
-# ffmpeg
+# Verify ffmpeg installation
 RUN ffmpeg -version
